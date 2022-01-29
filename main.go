@@ -36,7 +36,7 @@ func gocamel() error {
 			return fmt.Errorf("reading %s: %w", filename, err)
 		}
 
-		newContents, err := processOneFile(filename, contents, *willPrintAST)
+		newContents, err := snakeCaseToCamelCaseFile(filename, contents, *willPrintAST)
 		if err != nil {
 			return fmt.Errorf("processing %s: %w", filename, err)
 		}
@@ -48,7 +48,7 @@ func gocamel() error {
 	return nil
 }
 
-func processOneFile(filename string, contents []byte, willPrintAST bool) ([]byte, error) {
+func snakeCaseToCamelCaseFile(filename string, contents []byte, willPrintAST bool) ([]byte, error) {
 	// Create the AST by parsing src.
 	fset := token.NewFileSet() // positions are relative to fset
 	fileAST, err := parser.ParseFile(fset, filename, contents, parser.ParseComments)

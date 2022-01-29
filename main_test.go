@@ -70,10 +70,77 @@ func aB(cD eF) gH {
 }
 `,
 		},
-		// { name: "function call" },
-		// { name: "method declaration" },
-		// { name: "method call" },
-		// { name: "variable declaration" },
+		{
+			name: "function calls",
+			input: `package x
+
+func f() {
+	a_b(c_d())
+	return e_f()
+}
+`,
+			want: `package x
+
+func f() {
+	aB(cD())
+	return eF()
+}
+`,
+		},
+		{
+			name: "method declaration",
+			input: `package x
+
+func (a_b *c_d) e_f() (g_h i_j) {
+}
+`,
+			want: `package x
+
+func (aB *cD) eF() (gH iJ) {
+}
+`,
+		},
+		{
+			name: "method call",
+			input: `package x
+
+func f() {
+	a_b.c_d().e_f()
+}
+`,
+			want: `package x
+
+func f() {
+	aB.cD().eF()
+}
+`,
+		},
+		{
+			name: "field access",
+			input: `package x
+
+func f() int {
+	return a.b_c.d_e
+}
+`,
+			want: `package x
+
+func f() int {
+	return a.bC.dE
+}
+`,
+		},
+		{
+			name: "variable declaration",
+			input: `package x
+
+var a_b c_d = e_f.g_h().i_j
+`,
+			want: `package x
+
+var aB cD = eF.gH().iJ
+`,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

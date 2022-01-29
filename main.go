@@ -22,6 +22,7 @@ func main() {
 }
 
 func gocamel() error {
+	flag.Parse()
 	if flag.NArg() == 0 {
 		return errors.New("usage: gocamel file1.go ... fileN.go")
 	}

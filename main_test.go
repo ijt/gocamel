@@ -17,6 +17,8 @@ func Test_snakeToCamel(t *testing.T) {
 		{"a_b_c", "aBC"},
 		{"a_bc", "aBc"},
 		{"ab_c", "abC"},
+		// Leave shouting snakes alone.
+		{"SNAKE_SHOUT_CASE", "SNAKE_SHOUT_CASE"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.ident, func(t *testing.T) {

@@ -2,7 +2,6 @@
 package main
 
 import (
-	"bytes"
 	"errors"
 	"flag"
 	"fmt"
@@ -10,7 +9,6 @@ import (
 	"go/format"
 	"go/parser"
 	"go/token"
-	"io/ioutil"
 	"os"
 )
 
@@ -50,12 +48,15 @@ func gocamel() error {
 		}
 
 		// Overwrite the original file from the modified AST.
-		var buf bytes.Buffer
-		if err := format.Node(&buf, fset, fileAST); err != nil {
+		f, err = os.Create(filename)
+		if err != nil {
+			return fmt.Errorf("opening %s for writing: %w", err)
+		}
+		if err := format.Node(f, fset, fileAST); err != nil {
 			return fmt.Errorf("formatting AST for %s: %w", filename, err)
 		}
-		if err := ioutil.WriteFile(filename, buf.Bytes(), 0640); err != nil {
-			return fmt.Errorf("writing %s: %w", filename, err)
+		if err := f.Close(); err != nil {
+			return fmt.Errorf("closing %s: %w", filename, err)
 		}
 	}
 	return nil

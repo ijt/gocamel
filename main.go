@@ -65,6 +65,9 @@ func snakeCaseToCamelCaseFile(filename string, contents []byte, willPrintAST boo
 	ast.Inspect(fileAST, func(n ast.Node) bool {
 		switch x := n.(type) {
 		case *ast.Ident:
+			if strings.HasPrefix(x.Name, "Test") {
+				return true
+			}
 			x.Name = snakeToCamel(x.Name)
 		}
 		return true

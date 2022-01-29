@@ -141,6 +141,19 @@ var a_b c_d = e_f.g_h().i_j
 var aB cD = eF.gH().iJ
 `,
 		},
+		{
+			name: "test names get left alone",
+			input: `package x
+
+func TestFoo_Bar(t *testing.T) {
+}
+`,
+			want: `package x
+
+func TestFoo_Bar(t *testing.T) {
+}
+`,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

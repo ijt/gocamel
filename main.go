@@ -10,6 +10,8 @@ import (
 	"go/parser"
 	"go/token"
 	"os"
+	"regexp"
+	"strings"
 )
 
 func main() {
@@ -19,7 +21,10 @@ func main() {
 	}
 }
 
+var foo = 1
+
 func gocamel() error {
+	willPrintVars := flag.Bool("print_vars", false, "whether to print out the vars")
 	willPrint := flag.Bool("print", false, "whether to print out the AST")
 	flag.Parse()
 	if flag.NArg() == 0 {
@@ -47,6 +52,19 @@ func gocamel() error {
 			}
 		}
 
+		ast.Inspect(fileAST, func(n ast.Node) bool {
+			switch x := n.(type) {
+			case *ast.Ident:
+				if x.Obj != nil && x.Obj.Kind == ast.Var {
+					if *willPrintVars {
+						fmt.Printf("var: %v\n", x.Name)
+					}
+					x.Name = snakeToCamel(x.Name)
+				}
+			}
+			return true
+		})
+
 		// Overwrite the original file from the modified AST.
 		f, err = os.Create(filename)
 		if err != nil {
@@ -60,4 +78,12 @@ func gocamel() error {
 		}
 	}
 	return nil
+}
+
+var rx = regexp.MustCompile(`(\w)_(\w)`)
+
+func snakeToCamel(ident string) string {
+	return rx.ReplaceAllStringFunc(ident, func(s string) string {
+		return s[0:1] + strings.ToUpper(s[2:3])
+	})
 }

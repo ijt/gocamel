@@ -42,10 +42,27 @@ func gocamel() error {
 			return fmt.Errorf("closing %s: %w", filename, err)
 		}
 
+		bs, err := ioutil.ReadFile(filename)
+		if err != nil {
+			return fmt.Errorf("reading bytes of %s: %w", filename, err)
+		}
+
 		// Create an ast.CommentMap from the ast.File's comments.
 		// This helps keeping the association between comments
 		// and AST nodes.
 		cmap := ast.NewCommentMap(fset, fileAST, fileAST.Comments)
+
+		ast.Inspect(fileAST, func(n ast.Node) bool {
+			switch x := n.(type) {
+			case *ast.DeclStmt:
+				content := bs[x.Decl.Pos():x.Decl.End()]
+				fmt.Printf("decl stmt: %s\n", content)
+			case *ast.GenDecl:
+				content := bs[x.Pos():x.End()]
+				fmt.Printf("gen decl: %s\n", content)
+			}
+			return true
+		})
 
 		// Use the comment map to filter comments that don't belong anymore
 		// (the comments associated with the variable declaration), and create

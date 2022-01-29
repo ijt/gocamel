@@ -41,6 +41,7 @@ func gocamel() error {
 			return fmt.Errorf("processing %s: %w", filename, err)
 		}
 
+		/// Overwrite the original file from the modified AST.
 		if err := ioutil.WriteFile(filename, newContents, 0640); err != nil {
 			return fmt.Errorf("writing new version of %s: %w", filename, err)
 		}
@@ -73,7 +74,7 @@ func snakeCaseToCamelCaseFile(filename string, contents []byte, willPrintAST boo
 		return true
 	})
 
-	// Overwrite the original file from the modified AST.
+	// Format the AST.
 	var buf bytes.Buffer
 	if err := format.Node(&buf, fset, fileAST); err != nil {
 		return nil, fmt.Errorf("formatting AST for %s: %w", filename, err)

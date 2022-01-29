@@ -47,15 +47,6 @@ func gocamel() error {
 		// and AST nodes.
 		cmap := ast.NewCommentMap(fset, fileAST, fileAST.Comments)
 
-		// Remove the first variable declaration from the list of declarations.
-		for i, decl := range fileAST.Decls {
-			if gen, ok := decl.(*ast.GenDecl); ok && gen.Tok == token.VAR {
-				copy(fileAST.Decls[i:], fileAST.Decls[i+1:])
-				fileAST.Decls = fileAST.Decls[:len(fileAST.Decls)-1]
-				break
-			}
-		}
-
 		// Use the comment map to filter comments that don't belong anymore
 		// (the comments associated with the variable declaration), and create
 		// the new comments list.

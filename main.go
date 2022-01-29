@@ -21,8 +21,6 @@ func main() {
 	}
 }
 
-var foo = 1
-
 func gocamel() error {
 	willPrintVars := flag.Bool("print_vars", false, "whether to print out the vars")
 	willPrint := flag.Bool("print", false, "whether to print out the AST")
@@ -68,7 +66,7 @@ func gocamel() error {
 		// Overwrite the original file from the modified AST.
 		f, err = os.Create(filename)
 		if err != nil {
-			return fmt.Errorf("opening %s for writing: %w", err)
+			return fmt.Errorf("opening %s for writing: %w", filename, err)
 		}
 		if err := format.Node(f, fset, fileAST); err != nil {
 			return fmt.Errorf("formatting AST for %s: %w", filename, err)
@@ -83,7 +81,13 @@ func gocamel() error {
 var rx = regexp.MustCompile(`(\w)_(\w)`)
 
 func snakeToCamel(ident string) string {
-	return rx.ReplaceAllStringFunc(ident, func(s string) string {
-		return s[0:1] + strings.ToUpper(s[2:3])
-	})
+	for {
+		ident2 := rx.ReplaceAllStringFunc(ident, func(s string) string {
+			return s[0:1] + strings.ToUpper(s[2:3])
+		})
+		if ident2 == ident {
+			return ident
+		}
+		ident = ident2
+	}
 }

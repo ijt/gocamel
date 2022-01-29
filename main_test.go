@@ -19,6 +19,8 @@ func Test_snakeToCamel(t *testing.T) {
 		{"ab_c", "abC"},
 		// Leave shouting snakes alone.
 		{"SNAKE_SHOUT_CASE", "SNAKE_SHOUT_CASE"},
+		// Don't collapse A_B for uppercase A and B.
+		{"A_Bfoo_Bar_baz", "A_BfooBarBaz"},
 	}
 	for _, tt := range tests {
 		t.Run(tt.ident, func(t *testing.T) {

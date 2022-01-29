@@ -81,15 +81,16 @@ func snakeCaseToCamelCaseFile(filename string, contents []byte, willPrintAST boo
 	return buf.Bytes(), nil
 }
 
-var snakeShoutRx = regexp.MustCompile(`[A-Z0-9_]+`)
 var rx = regexp.MustCompile(`(\w)_(\w)`)
 
 func snakeToCamel(ident string) string {
-	if snakeShoutRx.FindString(ident) == ident {
-		return ident
-	}
 	for {
 		ident2 := rx.ReplaceAllStringFunc(ident, func(s string) string {
+			leftIsUpper := strings.ToUpper(s[0:1]) == s[0:1]
+			rightIsUpper := strings.ToUpper(s[2:3]) == s[2:3]
+			if leftIsUpper && rightIsUpper {
+				return s
+			}
 			return s[0:1] + strings.ToUpper(s[2:3])
 		})
 		if ident2 == ident {
